@@ -1,0 +1,15 @@
+{
+  "name": "to-do-server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server"
+  },
+  "author": "Rahil Bin Mushfiq",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
