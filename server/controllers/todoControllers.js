@@ -1,7 +1,7 @@
 let todos = [
-  { id: 0, task: "task 1" },
-  { id: 1, task: "task 2" },
-  { id: 2, task: "task 3" },
+  { id: 0, task: "Buy apples for parents", isDone: true },
+  { id: 1, task: "Fix the bug in shop page", isDone: false },
+  { id: 2, task: "Get the keys from uncle", isDone: false },
 ];
 
 export const getTodos = (req, res) => {
@@ -9,14 +9,14 @@ export const getTodos = (req, res) => {
 };
 
 export const getTodo = (req, res) => {
-  const todoId = req.params.id;
+  const todoId = Number(req.params.id);
 
   if (isNaN(todoId))
     return res
       .status(400)
-      .json({ message: `Bad request: ${todoId} is not a number.` });
+      .json({ message: `Bad request: ${req.params.id} is not a number.` });
 
-  const todo = todos.find((todo) => todo.id == todoId);
+  const todo = todos.find((todo) => todo.id === todoId);
 
   if (!todo)
     return res
@@ -27,7 +27,7 @@ export const getTodo = (req, res) => {
 };
 
 export const addTodo = (req, res) => {
-  const task = req.body;
+  const { task } = req.body;
 
   if (!task)
     return res.status(400).json({ message: "Bad request: nothing submitted." });
@@ -37,43 +37,74 @@ export const addTodo = (req, res) => {
       .status(400)
       .json({ message: "Bad request: wrong format submitted." });
 
-  todos.push({ id: todos.length, task });
+  const newTodo = {
+    id: todos.length > 0 ? Math.max(...todos.map((t) => t.id)) + 1 : 0,
+    task,
+    isDone: false,
+  };
 
-  res.status(201);
+  todos.push(newTodo);
+
+  res.status(201).json({ message: "Todo added successfully" });
 };
 
 export const updateTodo = (req, res) => {
-  const targetedTodoId = req.params.id;
-  const updatedTask = req.body;
+  const targetedTodoId = Number(req.params.id);
+  const updatedTodo = req.body;
 
-  if (!isNaN(targetedTodoId))
+  if (isNaN(targetedTodoId))
     return res
       .status(400)
-      .json({ message: `Bad request: ${targetedTodoId} is not a number.` });
+      .json({ message: `Bad request: ${req.params.id} is not a number.` });
 
-  if (!updatedTask)
+  if (!updatedTodo)
     return res.status(400).json({ message: "Bad request: nothing submitted." });
 
-  if (typeof updatedTask !== "string")
-    return res
-      .status(400)
-      .json({ message: "Bad request: wrong format submitted." });
+  let todoExists = false;
+  todos = todos.map((prevTodo) => {
+    if (prevTodo.id === targetedTodoId) {
+      todoExists = true;
+      return {
+        ...prevTodo,
+        task: updatedTodo.task !== undefined ? updatedTodo.task : prevTodo.task,
+        isDone:
+          updatedTodo.isDone !== undefined
+            ? updatedTodo.isDone
+            : prevTodo.isDone,
+      };
+    }
+    return prevTodo;
+  });
 
-  todos = todos.map((prevTodo) => ({
-    ...prevTodo,
-    task: prevTodo.id === targetedTodoId ? updatedTask : prevTodo.task,
-  }));
+  if (!todoExists) {
+    return res.status(404).json({
+      message: `Not found: todo with ${targetedTodoId} does not exist.`,
+    });
+  }
+
+  return res
+    .status(200)
+    .json({ message: `Todo with ID ${targetedTodoId} updated successfully.` });
 };
 
 export const deleteTodo = (req, res) => {
-  const todoId = req.params.id;
+  const todoId = Number(req.params.id);
 
-  if (!isNaN(todoId))
+  if (isNaN(todoId))
     return res
       .status(400)
-      .json({ message: `Bad request: ${todoId} is not a number.` });
+      .json({ message: `Bad request: ${req.params.id} is not a number.` });
 
+  const initialLength = todos.length;
   todos = todos.filter((todo) => todo.id !== todoId);
 
-  res.status(201);
+  if (todos.length === initialLength) {
+    return res
+      .status(404)
+      .json({ message: `Not found: todo with ${todoId} does not exist.` });
+  }
+
+  return res
+    .status(200)
+    .json({ message: `Todo with ID ${todoId} deleted successfully.` });
 };

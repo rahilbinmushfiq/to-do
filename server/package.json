@@ -4,12 +4,13 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch server"
+    "dev": "node --env-file=../.env --watch server"
   },
   "author": "Rahil Bin Mushfiq",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0"
   }
 }
