@@ -5,10 +5,10 @@ import DeleteTodo from "./DeleteTodo";
 export default function TodoList({ todos }) {
   return (
     <section className="w-full max-w-lg space-y-2.5">
-      {todos.map((todo) => {
+      {todos?.map((todo) => {
         return (
           <div
-            key={`todo-task-${todo.id}`}
+            key={`todo-task-${todo._id}`}
             className="flex items-center justify-between"
           >
             <TodoWithCheckbox todo={todo} />

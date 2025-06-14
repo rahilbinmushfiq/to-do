@@ -23,7 +23,7 @@ export default function DeleteTodo({ todo }) {
   const handleTodoDelete = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/todos/${todo.id}`,
+        `http://localhost:5000/api/todos/${todo._id}`,
         {
           method: "DELETE",
         },

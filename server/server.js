@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
+import connectDB from "./config/db.js";
 import todoRouter from "./routes/todoRoutes.js";
+
+connectDB();
 
 const app = express();
 

@@ -13,14 +13,13 @@ export default function TodoWithCheckbox({ todo }) {
     const wasPrevTaskDone = todo.isDone;
     try {
       const response = await fetch(
-        `http://localhost:5000/api/todos/${todo.id}`,
+        `http://localhost:5000/api/todos/${todo._id}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            ...todo,
             isDone: !wasPrevTaskDone,
           }),
         },
@@ -52,11 +51,11 @@ export default function TodoWithCheckbox({ todo }) {
     <div className="flex items-center gap-3 [&>*]:cursor-pointer [&>label]:text-base">
       <Checkbox
         onClick={handleTaskCompletion}
-        id={`todo-task-id-${todo.id}`}
+        id={`todo-task-checkbox-${todo._id}`}
         checked={todo.isDone}
       />
       <Label
-        htmlFor={`todo-task-id-${todo.id}`}
+        htmlFor={`todo-task-checkbox-${todo._id}`}
         className={todo.isDone ? "relative text-neutral-400 line-through" : ""}
       >
         {todo.task}
